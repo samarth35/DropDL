@@ -48,7 +48,7 @@ The portable app is created at:
 outputs\DropDL-Windows\DropDL.exe
 ```
 
-Distribute the complete `DropDL-Windows` folder. End users do not need Python, yt-dlp, FFmpeg, or terminal commands. Downloads are saved to `Downloads\DropDL`.
+ Downloads are saved to `Downloads\DropDL`.
 
 ## Notes
 
