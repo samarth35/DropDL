@@ -1,52 +1,50 @@
 # DropDL
 
-DropDL is a local Windows desktop app for downloading video and audio with
-[`yt-dlp`](https://github.com/yt-dlp/yt-dlp). It provides a straightforward
-interface for choosing output quality, extracting audio, downloading
-subtitles, and saving only a specific section of a video.
+DropDL is a portable Windows interface for
+[`yt-dlp`](https://github.com/yt-dlp/yt-dlp). It downloads video or audio,
+supports quality and subtitle options, and can save only a selected section
+of a video.
 
-Everything runs on the user's computer. The packaged release includes
-`yt-dlp` and FFmpeg, starts its own local server, and opens the interface in
-the default web browser.
+The app runs entirely on the local computer. It does not upload links or
+media to a hosted DropDL server.
 
 ## Download
 
-### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.4/DropDL-Windows.zip)
+Download `DropDL-Windows.zip` from the
+[latest GitHub release](https://github.com/samarth35/DropDL/releases/latest),
+extract it, and open `DropDL.exe`.
 
-1. Download and extract `DropDL-Windows.zip`.
-2. Keep the extracted folder together.
-3. Open `DropDL.exe`.
+Keep the complete extracted folder together. The executable relies on the
+files in its `_internal` directory.
 
-No Python installation, FFmpeg installation, command prompt, or `PATH`
-configuration is required. Downloads are saved under:
+The Windows package includes Python, yt-dlp, FFmpeg, and FFprobe. Users do not
+need to install those tools or add anything to `PATH`.
+
+Downloaded files are stored in:
 
 ```text
 %USERPROFILE%\Downloads\DropDL
 ```
 
-Windows may display a SmartScreen warning because the executable is not
-code-signed. Select **More info**, then **Run anyway** if you downloaded it
-from this repository.
-
-See [all releases](https://github.com/samarth35/DropDL/releases) for older
-versions and release notes.
+Windows SmartScreen may warn about an unsigned application. Code signing is
+not currently configured for this project.
 
 ## Features
 
-- Download video using the best available format or a maximum resolution
+- Download video at the best available quality or a selected maximum height
 - Extract audio as MP3, M4A, Opus, or WAV
-- Fetch the title, uploader, duration, and thumbnail before downloading
-- Crop video or audio using start and end timestamps
+- Inspect title, uploader, duration, and thumbnail before downloading
+- Download a precise time range instead of the complete media
 - Download individual videos or playlists
 - Save English subtitles when available
-- Display download progress, speed, ETA, and processing status
-- Keep completed downloads available for saving again during the session
-- Run entirely on localhost without a hosted backend
+- Show progress, speed, ETA, and post-processing status
+- Reopen the interface from the Windows notification area
+- Run only on a random localhost port
 
-## Timeline Cropping
+## Timeline Selection
 
-Enable **Download a specific part** and provide a start and end time.
-Accepted formats are:
+Enable **Download a specific part**, then enter a start and end time. DropDL
+accepts seconds, `MM:SS`, or `HH:MM:SS`:
 
 ```text
 90
@@ -54,49 +52,53 @@ Accepted formats are:
 01:02:30
 ```
 
-These represent raw seconds, `MM:SS`, and `HH:MM:SS` respectively. DropDL
-uses yt-dlp download ranges and FFmpeg keyframe re-encoding for accurate
-cuts. Processing a precise video segment can therefore take longer than
-downloading the complete file.
+Accurate cuts may require FFmpeg to re-encode around the selected boundaries,
+so a short clip can still take some time to process.
 
-## How It Works
+## Desktop Runtime
 
-The desktop executable launches a FastAPI server on a random localhost port
-and opens the interface in the default browser. DropDL remains available in
-the Windows notification area, where the interface can be reopened or the
-local server can be stopped cleanly.
+`DropDL.exe` starts FastAPI and Uvicorn inside the same desktop process on an
+available `127.0.0.1` port. It then opens the interface in the default browser.
+Closing the browser does not stop active downloads; use the DropDL tray menu
+to reopen or exit the app.
+
+The desktop build does not use pywebview, Python.NET, or a separately installed
+browser runtime.
+
+## Release Verification
+
+Every Windows build must pass two automated runtime checks before its ZIP is
+created:
+
+1. Start the frozen executable from the PyInstaller output folder.
+2. Create the release ZIP, extract that exact archive, and start its executable.
+
+Both checks request `/api/health`, load the real HTML interface, confirm the
+process is frozen, confirm bundled FFmpeg is available, and verify clean
+shutdown. A release contains:
 
 ```text
-Default web browser
-        |
-        v
-FastAPI on 127.0.0.1
-        |
-        +-- yt-dlp: metadata and downloads
-        |
-        +-- FFmpeg: merging, conversion, and trimming
-        |
-        v
-Downloads\DropDL
+DropDL-Windows.zip
+DropDL-Windows.sha256
+DropDL-Windows.proof.json
 ```
 
-The Windows release is packaged with PyInstaller and contains:
+To verify a downloaded archive in PowerShell:
 
-- Python runtime
-- FastAPI and Uvicorn
-- yt-dlp
-- FFmpeg and FFprobe
-- HTML, CSS, and JavaScript interface
+```powershell
+Get-FileHash .\DropDL-Windows.zip -Algorithm SHA256
+Get-Content .\DropDL-Windows.sha256
+```
 
-## Running From Source
+The hashes must match.
+
+## Run From Source
 
 Requirements:
 
 - Windows 10 or Windows 11
-- Python 3.11 or newer
+- 64-bit Python 3.12
 - FFmpeg and FFprobe available on `PATH`
-
-Clone the repository and start the development server:
 
 ```powershell
 git clone https://github.com/samarth35/DropDL.git
@@ -104,67 +106,64 @@ cd DropDL
 powershell -ExecutionPolicy Bypass -File .\run.ps1
 ```
 
-The interface will be available at <http://127.0.0.1:8000>.
+The development interface is served at <http://127.0.0.1:8000>.
 
-## Building The Windows Release
+## Build The Windows Package
 
-The build script creates a portable application folder and ZIP archive:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\build-windows.ps1
-```
-
-If FFmpeg is not on `PATH`, provide its `bin` directory:
+Use 64-bit Python 3.12 and pass a shared FFmpeg `bin` directory when FFmpeg is
+not already on `PATH`:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build-windows.ps1 `
-  -FfmpegBin "C:\path\to\ffmpeg\bin"
+  -Python "C:\Path\To\Python312\python.exe" `
+  -FfmpegBin "C:\Path\To\ffmpeg\bin" `
+  -RecreateEnvironment
 ```
 
-Build output:
+The script installs the locked Windows dependencies, builds with PyInstaller,
+runs both packaged smoke tests, and writes the verified release artifacts to
+`outputs`.
 
-```text
-outputs\DropDL-Windows\DropDL.exe
-outputs\DropDL-Windows.zip
-```
-
-The project uses the complete shared FFmpeg runtime. Distribute the generated
-ZIP or the entire `DropDL-Windows` folder, not `DropDL.exe` by itself.
-
-Version tags matching `v*` trigger the
-[Windows release workflow](https://github.com/samarth35/DropDL/actions/workflows/release-windows.yml),
-which builds the app and attaches the ZIP to a GitHub Release.
+Tags matching `v*` run the same script in GitHub Actions and attach the ZIP,
+checksum, and proof file to a GitHub Release. A failed runtime check prevents
+the release step from running.
 
 ## Project Structure
 
 ```text
 app/
-  main.py                 FastAPI API and yt-dlp job handling
+  main.py                    API, yt-dlp jobs, trimming, and file delivery
 static/
-  index.html              Desktop interface
-  styles.css              Responsive styling
-  app.js                  UI state and API requests
-desktop.py                Windows tray launcher and server lifecycle
-DropDL.spec               PyInstaller configuration
-run.ps1                   Development launcher
-build-windows.ps1         Windows packaging script
-requirements.txt          Runtime dependencies
-requirements-build.txt    Packaging dependencies
+  index.html                 Browser interface
+  styles.css                 Application styling
+  app.js                     UI state and API requests
+.github/workflows/
+  release-windows.yml        Verified Windows release workflow
+desktop.py                   Tray launcher and local server lifecycle
+DropDL.spec                  PyInstaller configuration
+build-windows.ps1            Reproducible packaging and release tests
+run.ps1                      Development launcher
+requirements.txt             Direct runtime dependencies
+requirements-build.txt       Direct packaging dependencies
+requirements-windows.lock    Complete pinned Windows build environment
+THIRD_PARTY_NOTICES.txt      Dependency and FFmpeg notices
 ```
 
-## Current Limitations
+Generated directories such as `.venv-build`, `vendor`, `work`, and `outputs`
+are intentionally excluded from Git.
 
-- The packaged release currently targets 64-bit Windows.
-- Some websites may require authentication, cookies, or additional yt-dlp
-  configuration that is not yet exposed in the interface.
-- Site changes can temporarily break downloads until yt-dlp is updated.
-- Downloads are not automatically removed from disk.
+## Limitations
+
+- Releases currently target 64-bit Windows only.
+- Some websites require authentication or browser cookies that the interface
+  does not yet expose.
+- Website changes can require a newer yt-dlp release.
+- The executable is not code-signed.
 
 ## Legal
 
-DropDL is a frontend for third-party tools and does not host or provide media.
 Only download content you own or are authorized to access. You are responsible
-for complying with applicable laws and the terms of the source website.
+for complying with applicable law and the source website's terms.
 
-FFmpeg, yt-dlp, and other dependencies retain their respective
-licenses. See [`THIRD_PARTY_NOTICES.txt`](THIRD_PARTY_NOTICES.txt) for details.
+Third-party components retain their own licenses. See
+[`THIRD_PARTY_NOTICES.txt`](THIRD_PARTY_NOTICES.txt).
