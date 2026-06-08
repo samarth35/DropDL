@@ -2,10 +2,7 @@
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_all
-
 project_dir = Path(SPECPATH)
-webview_datas, webview_binaries, webview_hiddenimports = collect_all("webview")
 
 ffmpeg_files = [
     (str(path), "ffmpeg")
@@ -16,16 +13,16 @@ ffmpeg_files = [
 a = Analysis(
     ["desktop.py"],
     pathex=[str(project_dir)],
-    binaries=webview_binaries + ffmpeg_files,
-    datas=webview_datas + [
+    binaries=ffmpeg_files,
+    datas=[
         (str(project_dir / "static"), "static"),
         (str(project_dir / "THIRD_PARTY_NOTICES.txt"), "."),
     ],
-    hiddenimports=webview_hiddenimports,
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["tkinter", "pytest"],
+    excludes=["pytest", "webview", "pythonnet", "clr", "clr_loader"],
     noarchive=False,
     optimize=1,
 )

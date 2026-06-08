@@ -15,12 +15,6 @@ yt-dlp is dedicated to the public domain under The Unlicense.
 
 Project and source: https://github.com/yt-dlp/yt-dlp
 
-pywebview
----------
-pywebview is licensed under the BSD 3-Clause License.
-
-Project and source: https://github.com/r0x0r/pywebview
-
 Python, FastAPI, Uvicorn, PyInstaller, and their packaged dependencies
 retain their respective licenses. Their project metadata is included in
 the packaged Python distribution.

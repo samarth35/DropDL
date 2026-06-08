@@ -6,12 +6,12 @@ interface for choosing output quality, extracting audio, downloading
 subtitles, and saving only a specific section of a video.
 
 Everything runs on the user's computer. The packaged release includes
-`yt-dlp` and FFmpeg, starts its own local server, and opens in a native
-desktop window.
+`yt-dlp` and FFmpeg, starts its own local server, and opens the interface in
+the default web browser.
 
 ## Download
 
-### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.0/DropDL-Windows.zip)
+### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.1/DropDL-Windows.zip)
 
 1. Download and extract `DropDL-Windows.zip`.
 2. Keep the extracted folder together.
@@ -62,12 +62,12 @@ downloading the complete file.
 ## How It Works
 
 The desktop executable launches a FastAPI server on a random localhost port
-and displays the interface through pywebview using the Edge WebView2 runtime.
-The server is only accessible from the local machine and shuts down when the
-window closes.
+and opens the interface in the default browser. A small DropDL control window
+remains open so the interface can be reopened and the local server can be
+stopped cleanly.
 
 ```text
-Desktop window (pywebview)
+Default web browser
         |
         v
 FastAPI on 127.0.0.1
@@ -85,7 +85,6 @@ The Windows release is packaged with PyInstaller and contains:
 - Python runtime
 - FastAPI and Uvicorn
 - yt-dlp
-- pywebview
 - FFmpeg and FFprobe
 - HTML, CSS, and JavaScript interface
 
@@ -145,7 +144,7 @@ static/
   index.html              Desktop interface
   styles.css              Responsive styling
   app.js                  UI state and API requests
-desktop.py                pywebview desktop entry point
+desktop.py                Windows launcher and server lifecycle
 DropDL.spec               PyInstaller configuration
 run.ps1                   Development launcher
 build-windows.ps1         Windows packaging script
@@ -156,8 +155,6 @@ requirements-build.txt    Packaging dependencies
 ## Current Limitations
 
 - The packaged release currently targets 64-bit Windows.
-- Microsoft Edge WebView2 is required. It is included with current Windows
-  10 and Windows 11 installations.
 - Some websites may require authentication, cookies, or additional yt-dlp
   configuration that is not yet exposed in the interface.
 - Site changes can temporarily break downloads until yt-dlp is updated.
@@ -169,5 +166,5 @@ DropDL is a frontend for third-party tools and does not host or provide media.
 Only download content you own or are authorized to access. You are responsible
 for complying with applicable laws and the terms of the source website.
 
-FFmpeg, yt-dlp, pywebview, and other dependencies retain their respective
+FFmpeg, yt-dlp, and other dependencies retain their respective
 licenses. See [`THIRD_PARTY_NOTICES.txt`](THIRD_PARTY_NOTICES.txt) for details.
