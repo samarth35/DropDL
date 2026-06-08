@@ -2,6 +2,14 @@
 
 A Windows desktop interface for `yt-dlp`, built with FastAPI and pywebview.
 
+## Download
+
+Download the latest ready-to-run Windows build from
+[GitHub Releases](../../releases/latest).
+
+Extract `DropDL-Windows.zip`, then open `DropDL.exe`. Python, yt-dlp,
+FFmpeg, and terminal commands are not required.
+
 ## Features
 
 - Video and audio downloads
@@ -46,12 +54,25 @@ The portable app is created at:
 
 ```text
 outputs\DropDL-Windows\DropDL.exe
+outputs\DropDL-Windows.zip
 ```
 
- Downloads are saved to `Downloads\DropDL`.
+Distribute the complete `DropDL-Windows` folder. End users do not need Python, yt-dlp, FFmpeg, or terminal commands. Downloads are saved to `Downloads\DropDL`.
 
 ## Notes
 
 - Crop times accept seconds, `MM:SS`, or `HH:MM:SS`.
 - Only download media you are authorized to access.
 - Third-party licensing information is in `THIRD_PARTY_NOTICES.txt`.
+
+## Publishing A Release
+
+Push a version tag to trigger the Windows release workflow:
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+GitHub Actions builds the desktop app and attaches `DropDL-Windows.zip`
+to the release automatically.

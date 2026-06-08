@@ -74,6 +74,13 @@ if (-not (Test-Path (Join-Path $dist "DropDL.exe"))) {
 }
 Copy-Item -LiteralPath (Join-Path $project "THIRD_PARTY_NOTICES.txt") -Destination $dist -Force
 
+$zip = Join-Path $project "outputs\DropDL-Windows.zip"
+if (Test-Path $zip) {
+    Remove-Item -LiteralPath $zip -Force
+}
+Compress-Archive -Path $dist -DestinationPath $zip -CompressionLevel Optimal
+
 Write-Host ""
 Write-Host "DropDL Windows build created:"
 Write-Host "  $dist"
+Write-Host "  $zip"
