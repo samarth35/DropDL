@@ -46,10 +46,6 @@ def main() -> None:
     url = f"http://127.0.0.1:{port}"
     config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning", access_log=False)
     server = uvicorn.Server(config)
-    server.install_signal_handlers = lambda: None
-    thread = threading.Thread(target=server.run, name="dropdl-server", daemon=True)
-    thread.start()
-    wait_for_server(port)
 
     icon: pystray.Icon
 
@@ -58,7 +54,6 @@ def main() -> None:
 
     def stop_app() -> None:
         server.should_exit = True
-        thread.join(timeout=3)
         icon.stop()
 
     icon = pystray.Icon(
@@ -70,8 +65,11 @@ def main() -> None:
             MenuItem("Exit", stop_app),
         ),
     )
-    threading.Timer(0.4, open_app).start()
-    icon.run()
+    tray_thread = threading.Thread(target=icon.run, name="dropdl-tray", daemon=True)
+    tray_thread.start()
+    threading.Thread(target=lambda: (wait_for_server(port), open_app()), daemon=True).start()
+    server.run()
+    icon.stop()
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ the default web browser.
 
 ## Download
 
-### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.2/DropDL-Windows.zip)
+### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.3/DropDL-Windows.zip)
 
 1. Download and extract `DropDL-Windows.zip`.
 2. Keep the extracted folder together.
