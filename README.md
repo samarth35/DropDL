@@ -14,11 +14,27 @@ Download `DropDL-Windows.zip` from the
 [latest GitHub release](https://github.com/samarth35/DropDL/releases/latest),
 extract it, and open `DropDL.exe`.
 
-Keep the complete extracted folder together. The executable relies on the
-files in its `_internal` directory.
+### No additional software required
 
-The Windows package includes Python, yt-dlp, FFmpeg, and FFprobe. Users do not
-need to install those tools or add anything to `PATH`.
+The Windows release is self-contained. It already includes:
+
+- FFmpeg and FFprobe
+- yt-dlp
+- Python and the required Python packages
+
+Users **do not need to install FFmpeg, Python, or yt-dlp**, and no changes to
+the Windows `PATH` environment variable are required.
+
+Extract the ZIP before running the application and keep the complete
+`DropDL-Windows` folder together. Do not move `DropDL.exe` out of that folder;
+it relies on the bundled files in `_internal`.
+
+Quick start:
+
+1. Download `DropDL-Windows.zip`.
+2. Select **Extract all** in Windows.
+3. Open the extracted `DropDL-Windows` folder.
+4. Run `DropDL.exe`.
 
 Downloaded files are stored in:
 
@@ -92,9 +108,10 @@ Get-Content .\DropDL-Windows.sha256
 
 The hashes must match.
 
-## Run From Source
+## Development From Source
 
-Requirements:
+The following requirements apply only to developers running the source code,
+not to users downloading the Windows release:
 
 - Windows 10 or Windows 11
 - 64-bit Python 3.12
