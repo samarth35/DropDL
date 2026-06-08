@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A friendly local web interface for yt-dlp.">
+    <title>DropDL</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="DropDL home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18h14"/></svg>
+        </span>
+        DropDL
+      </a>
+      <div class="local-status"><span></span>Local only</div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h1>Download media<br>without the command line.</h1>
+        <p>Paste a link, choose what you need, and let yt-dlp handle the difficult part.</p>
+      </section>
+
+      <section class="workspace">
+        <form id="download-form" class="controls">
+          <div class="url-row">
+            <label class="sr-only" for="url">Media URL</label>
+            <input id="url" name="url" type="url" placeholder="Paste a video or playlist URL" required autocomplete="url">
+            <button class="button button-secondary" id="fetch-button" type="button">Fetch details</button>
+          </div>
+
+          <div id="media-preview" class="media-preview hidden" aria-live="polite">
+            <img id="preview-image" alt="">
+            <div>
+              <strong id="preview-title"></strong>
+              <span id="preview-meta"></span>
+            </div>
+          </div>
+
+          <fieldset class="mode-switch">
+            <legend>Download mode</legend>
+            <label><input type="radio" name="mode" value="video" checked><span>Video</span></label>
+            <label><input type="radio" name="mode" value="audio"><span>Audio</span></label>
+          </fieldset>
+
+          <div class="field-grid">
+            <label>
+              <span>Quality</span>
+              <select id="quality" name="quality">
+                <option value="best">Best available</option>
+                <option value="1080">Up to 1080p</option>
+                <option value="720">Up to 720p</option>
+                <option value="480">Up to 480p</option>
+                <option value="360">Up to 360p</option>
+              </select>
+            </label>
+            <label>
+              <span id="format-label">Output</span>
+              <select id="audio-format" name="audio_format" disabled>
+                <option value="mp3">MP3</option>
+                <option value="m4a">M4A</option>
+                <option value="opus">Opus</option>
+                <option value="wav">WAV</option>
+              </select>
+              <div id="video-output" class="static-control">MP4 / best compatible</div>
+            </label>
+          </div>
+
+          <label class="check-row">
+            <input id="subtitles" name="subtitles" type="checkbox">
+            <span class="check-box" aria-hidden="true"></span>
+            <span><strong>Include English subtitles</strong><small>When they are available</small></span>
+          </label>
+
+          <section class="trim-section">
+            <label class="check-row trim-toggle">
+              <input id="trim-enabled" name="trim_enabled" type="checkbox">
+              <span class="check-box" aria-hidden="true"></span>
+              <span><strong>Download a specific part</strong><small>Trim the media to a start and end time</small></span>
+            </label>
+            <div id="trim-controls" class="trim-controls hidden">
+              <div class="trim-heading">
+                <span>Timeline crop</span>
+                <strong id="clip-duration">Select a range</strong>
+              </div>
+              <div class="trim-track" aria-hidden="true">
+                <div id="trim-fill"></div>
+                <span id="start-handle"></span>
+                <span id="end-handle"></span>
+              </div>
+              <div class="time-grid">
+                <label>
+                  <span>Start</span>
+                  <input id="start-time" name="start_time" type="text" inputmode="numeric" placeholder="00:00">
+                </label>
+                <label>
+                  <span>End</span>
+                  <input id="end-time" name="end_time" type="text" inputmode="numeric" placeholder="00:30">
+                </label>
+              </div>
+              <p class="field-help">Use seconds, MM:SS, or HH:MM:SS. Fetch details first to visualize the range.</p>
+            </div>
+          </section>
+
+          <div class="destination">
+            <span>Saved temporarily on this device</span>
+            <code>downloads/&lt;job&gt;/</code>
+          </div>
+
+          <button id="download-button" class="button button-primary" type="submit">
+            <span>Start download</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <p class="legal">Only download content you are authorized to access.</p>
+        </form>
+
+        <aside class="progress-panel" aria-live="polite">
+          <div class="panel-top">
+            <span>Current download</span>
+            <span id="job-state">Ready</span>
+          </div>
+          <div id="empty-state" class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"/></svg>
+            </div>
+            <h2>Your download will appear here</h2>
+            <p>Paste a link and choose your settings to get started.</p>
+          </div>
+          <div id="active-state" class="active-state hidden">
+            <div class="active-media">
+              <img id="active-thumbnail" alt="">
+              <div><strong id="active-title">Preparing download</strong><span id="active-source"></span></div>
+            </div>
+            <div class="progress-copy"><span id="progress-message">Starting...</span><strong id="progress-value">0%</strong></div>
+            <div class="progress-track"><div id="progress-bar"></div></div>
+            <div class="progress-stats"><span id="speed"></span><span id="eta"></span></div>
+            <a id="save-file" class="button button-save hidden" href="#">Save file</a>
+            <button id="reset-button" class="text-button hidden" type="button">Download another</button>
+            <p id="error-message" class="error hidden"></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="recent">
+        <div><h2>Recent downloads</h2><p>Completed during this session</p></div>
+        <ul id="recent-list"><li class="recent-empty">Nothing here yet.</li></ul>
+      </section>
+    </main>
+  </body>
+</html>

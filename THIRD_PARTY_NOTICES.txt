@@ -1,0 +1,26 @@
+DropDL includes the following third-party software:
+
+FFmpeg
+------
+FFmpeg is licensed under the GNU General Public License version 3 for
+the bundled GPL build. A copy of that license is included beside the
+FFmpeg binaries as ffmpeg/LICENSE.txt.
+
+Upstream source: https://ffmpeg.org/download.html#get-sources
+Windows build project: https://github.com/BtbN/FFmpeg-Builds
+
+yt-dlp
+------
+yt-dlp is dedicated to the public domain under The Unlicense.
+
+Project and source: https://github.com/yt-dlp/yt-dlp
+
+pywebview
+---------
+pywebview is licensed under the BSD 3-Clause License.
+
+Project and source: https://github.com/r0x0r/pywebview
+
+Python, FastAPI, Uvicorn, PyInstaller, and their packaged dependencies
+retain their respective licenses. Their project metadata is included in
+the packaged Python distribution.

@@ -1,0 +1,13 @@
+.venv/
+.venv-win/
+.venv-build/
+vendor/
+work/
+outputs/
+__pycache__/
+*.py[cod]
+downloads/*
+!downloads/.gitkeep
+.pytest_cache/
+.DS_Store
+Thumbs.db
