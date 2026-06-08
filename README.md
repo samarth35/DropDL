@@ -11,7 +11,7 @@ the default web browser.
 
 ## Download
 
-### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.1/DropDL-Windows.zip)
+### [Download DropDL for Windows](https://github.com/samarth35/DropDL/releases/download/v1.0.2/DropDL-Windows.zip)
 
 1. Download and extract `DropDL-Windows.zip`.
 2. Keep the extracted folder together.
@@ -62,9 +62,9 @@ downloading the complete file.
 ## How It Works
 
 The desktop executable launches a FastAPI server on a random localhost port
-and opens the interface in the default browser. A small DropDL control window
-remains open so the interface can be reopened and the local server can be
-stopped cleanly.
+and opens the interface in the default browser. DropDL remains available in
+the Windows notification area, where the interface can be reopened or the
+local server can be stopped cleanly.
 
 ```text
 Default web browser
@@ -144,7 +144,7 @@ static/
   index.html              Desktop interface
   styles.css              Responsive styling
   app.js                  UI state and API requests
-desktop.py                Windows launcher and server lifecycle
+desktop.py                Windows tray launcher and server lifecycle
 DropDL.spec               PyInstaller configuration
 run.ps1                   Development launcher
 build-windows.ps1         Windows packaging script

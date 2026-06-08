@@ -15,6 +15,13 @@ yt-dlp is dedicated to the public domain under The Unlicense.
 
 Project and source: https://github.com/yt-dlp/yt-dlp
 
+pystray and Pillow are distributed under their respective open-source
+licenses.
+
+Projects:
+- https://github.com/moses-palmer/pystray
+- https://github.com/python-pillow/Pillow
+
 Python, FastAPI, Uvicorn, PyInstaller, and their packaged dependencies
 retain their respective licenses. Their project metadata is included in
 the packaged Python distribution.

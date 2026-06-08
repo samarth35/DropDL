@@ -5,9 +5,11 @@ import threading
 import time
 import webbrowser
 from contextlib import closing
-from tkinter import Button, Label, Tk
 
+import pystray
 import uvicorn
+from PIL import Image, ImageDraw
+from pystray import MenuItem
 
 from app.main import app
 
@@ -29,6 +31,16 @@ def wait_for_server(port: int, timeout: float = 10) -> None:
     raise RuntimeError("DropDL could not start its local server.")
 
 
+def tray_image() -> Image.Image:
+    image = Image.new("RGBA", (64, 64), "#0d1426")
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((6, 6, 58, 58), radius=13, fill="#ff6258")
+    draw.line((32, 17, 32, 40), fill="white", width=6)
+    draw.line((22, 31, 32, 41, 42, 31), fill="white", width=6, joint="curve")
+    draw.line((18, 48, 46, 48), fill="white", width=5)
+    return image
+
+
 def main() -> None:
     port = available_port()
     url = f"http://127.0.0.1:{port}"
@@ -39,48 +51,27 @@ def main() -> None:
     thread.start()
     wait_for_server(port)
 
-    root = Tk()
-    root.title("DropDL")
-    root.geometry("360x180")
-    root.resizable(False, False)
-    root.configure(background="#0d1426")
+    icon: pystray.Icon
 
-    Label(
-        root,
-        text="DropDL is running",
-        font=("Segoe UI", 16, "bold"),
-        foreground="white",
-        background="#0d1426",
-    ).pack(pady=(24, 5))
-    Label(
-        root,
-        text="The downloader opens in your web browser.",
-        font=("Segoe UI", 10),
-        foreground="#bac2d2",
-        background="#0d1426",
-    ).pack()
-    Button(
-        root,
-        text="Open DropDL",
-        command=lambda: webbrowser.open(url),
-        font=("Segoe UI", 10, "bold"),
-        width=18,
-        background="#ff6258",
-        foreground="white",
-        activebackground="#e84c44",
-        activeforeground="white",
-        borderwidth=0,
-        cursor="hand2",
-    ).pack(pady=20)
+    def open_app() -> None:
+        webbrowser.open(url)
 
-    def stop() -> None:
+    def stop_app() -> None:
         server.should_exit = True
         thread.join(timeout=3)
-        root.destroy()
+        icon.stop()
 
-    root.protocol("WM_DELETE_WINDOW", stop)
-    root.after(250, lambda: webbrowser.open(url))
-    root.mainloop()
+    icon = pystray.Icon(
+        "DropDL",
+        tray_image(),
+        "DropDL",
+        menu=pystray.Menu(
+            MenuItem("Open DropDL", open_app, default=True),
+            MenuItem("Exit", stop_app),
+        ),
+    )
+    threading.Timer(0.4, open_app).start()
+    icon.run()
 
 
 if __name__ == "__main__":

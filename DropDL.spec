@@ -22,7 +22,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["pytest", "webview", "pythonnet", "clr", "clr_loader"],
+    excludes=["pytest", "webview", "pythonnet", "clr", "clr_loader", "tkinter"],
     noarchive=False,
     optimize=1,
 )
