@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import socket
-import threading
+import subprocess
+import sys
 import time
 import webbrowser
 from contextlib import closing
@@ -44,8 +45,12 @@ def tray_image() -> Image.Image:
 def main() -> None:
     port = available_port()
     url = f"http://127.0.0.1:{port}"
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning", access_log=False)
-    server = uvicorn.Server(config)
+    creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+    server_process = subprocess.Popen(
+        [sys.executable, "--server", str(port)],
+        creationflags=creation_flags,
+    )
+    wait_for_server(port)
 
     icon: pystray.Icon
 
@@ -53,7 +58,11 @@ def main() -> None:
         webbrowser.open(url)
 
     def stop_app() -> None:
-        server.should_exit = True
+        server_process.terminate()
+        try:
+            server_process.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            server_process.kill()
         icon.stop()
 
     icon = pystray.Icon(
@@ -65,12 +74,22 @@ def main() -> None:
             MenuItem("Exit", stop_app),
         ),
     )
-    tray_thread = threading.Thread(target=icon.run, name="dropdl-tray", daemon=True)
-    tray_thread.start()
-    threading.Thread(target=lambda: (wait_for_server(port), open_app()), daemon=True).start()
-    server.run()
-    icon.stop()
+    threading.Timer(0.4, open_app).start()
+    try:
+        icon.run()
+    finally:
+        if server_process.poll() is None:
+            server_process.terminate()
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 3 and sys.argv[1] == "--server":
+        uvicorn.run(
+            app,
+            host="127.0.0.1",
+            port=int(sys.argv[2]),
+            log_level="warning",
+            access_log=False,
+        )
+    else:
+        main()
