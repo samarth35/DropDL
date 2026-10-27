@@ -16,6 +16,19 @@
 }
 
 * { box-sizing: border-box; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+.controls, .progress-panel, .url-row, .url-row input, .field-grid > label, .media-preview > div { min-width: 0; }
+.media-preview strong, .media-preview span { max-width: 100% !important; }
+.mode-switch input:focus-visible + span, .check-row input:focus-visible + .check-box { outline: 3px solid var(--blue); outline-offset: 3px; }
+.check-row input:disabled ~ span { opacity: .5; }
+.notice { margin: 0 0 18px; padding: 12px; color: #76500b; background: #fff2d6; border-radius: 8px; font-size: 12px; line-height: 1.6; }
+.local-status.offline span { background: var(--coral); box-shadow: none; }
+.destination code { overflow-wrap: anywhere; text-align: right; }
+.recent .job-copy { min-width: 0; }
+.recent .job-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.recent .job-copy small { display: block; margin-top: 5px; color: #9ca7bc; }
+.recent .job-actions { display: flex; gap: 14px; align-items: center; flex-shrink: 0; }
+.recent .job-actions button { padding: 5px 0; border: 0; background: transparent; color: #c4cada; font-size: 12px; cursor: pointer; }
 body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 82% 12%, #1a2646 0, var(--ink) 34%); }
 button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
