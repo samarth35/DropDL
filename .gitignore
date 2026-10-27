@@ -1,6 +1,7 @@
 .venv/
 .venv-win/
 .venv-build/
+.venv-*/
 vendor/
 work/
 outputs/
