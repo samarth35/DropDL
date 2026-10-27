@@ -58,7 +58,7 @@ DOWNLOAD_DIR = user_download_dir()
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 FFMPEG_DIR = ffmpeg_dir()
 executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="dropdl")
-app = FastAPI(title="DropDL", version="1.1.0")
+app = FastAPI(title="DropDL", version="1.2.0")
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]"])
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
